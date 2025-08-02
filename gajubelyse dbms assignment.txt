@@ -1,0 +1,840 @@
+project_management=# select concat(first_name,last_name) AS full_name from employee;
+  full_name
+--------------
+ AliceJohnson
+ BobSmith
+ CarolAdams
+ DavidLee
+ EveMartins
+ FrankGreen
+ GraceBrown
+ HankWilson
+ IvyClark
+ JakeWhite
+
+project_management=# select lower(concat(first_name,last_name)) AS full_name from employee;
+  full_name
+--------------
+ alicejohnson
+ bobsmith
+ caroladams
+ davidlee
+ evemartins
+ frankgreen
+ gracebrown
+ hankwilson
+ ivyclark
+ jakewhite
+
+project_management=# select substring(first_name,1,3) from employee;
+ substring
+-----------
+ Ali
+ Bob
+ Car
+ Dav
+ Eve
+ Fra
+ Gra
+ Han
+ Ivy
+ Jak
+
+project_management=# select replace(email,'@company.com','@org.com') from employee;
+        replace
+-----------------------
+ alice.johnson@org.com
+ bob.smith@org.com
+ carol.adams@org.com
+ david.lee@org.com
+ eve.martins@org.com
+ frank.green@org.com
+ grace.brown@org.com
+ hank.wilson@org.com
+ ivy.clark@org.com
+ jake.white@org.com
+
+                    ^
+project_management=# select trim(first_name) AS trimmed_first_name from employee;
+ trimmed_first_name
+--------------------
+ Alice
+ Bob
+ Carol
+ David
+ Eve
+ Frank
+ Grace
+ Hank
+ Ivy
+ Jake
+
+project_management=# select position('@'IN email) from employee;
+ position
+----------
+       14
+       10
+       12
+       10
+       12
+       12
+       12
+       12
+       10
+       11
+
+project_management=# SELECT
+project_management-#    first_name,
+project_management-#  last_name,
+project_management-#  CASE
+project_management-#  WHEN first_name IN ('John', 'Michael', 'David') THEN 'Mr. ' || first_name || ' ' || last_name
+project_management-#  WHEN first_name IN ('Sarah', 'Emily', 'Anna') THEN 'Ms. ' || first_name || ' ' || last_name
+project_management-#  ELSE first_name || ' ' || last_name
+project_management-#  END AS titled_name
+project_management-# FROM employee;
+ first_name | last_name |  titled_name
+------------+-----------+---------------
+ Alice      | Johnson   | Alice Johnson
+ Bob        | Smith     | Bob Smith
+ Carol      | Adams     | Carol Adams
+ David      | Lee       | Mr. David Lee
+ Eve        | Martins   | Eve Martins
+ Frank      | Green     | Frank Green
+ Grace      | Brown     | Grace Brown
+ Hank       | Wilson    | Hank Wilson
+ Ivy        | Clark     | Ivy Clark
+ Jake       | White     | Jake White
+
+project_management=#
+project_management=# SELECT
+project_management-#   project_name,
+project_management-#   UPPER(project_name) AS project_name_upper
+project_management-# FROM projects;
+       project_name        |    project_name_upper
+---------------------------+---------------------------
+ HR Revamp                 | HR REVAMP
+ Finance Automation        | FINANCE AUTOMATION
+ IT Infrastructure Upgrade | IT INFRASTRUCTURE UPGRADE
+ Marketing Blitz 2025      | MARKETING BLITZ 2025
+ Legal Compliance          | LEGAL COMPLIANCE
+ Customer Portal           | CUSTOMER PORTAL
+ Sales Booster             | SALES BOOSTER
+ R&D Pilot                 | R&D PILOT
+ Procurement Tracker       | PROCUREMENT TRACKER
+ Operations Streamline     | OPERATIONS STREAMLINE
+
+
+project_management=# SELECT
+project_management-#   project_name,
+project_management-#   REPLACE(project_name, '-', '') AS project_name_no_dashes
+project_management-# FROM projects;
+       project_name        |  project_name_no_dashes
+---------------------------+---------------------------
+ HR Revamp                 | HR Revamp
+ Finance Automation        | Finance Automation
+ IT Infrastructure Upgrade | IT Infrastructure Upgrade
+ Marketing Blitz 2025      | Marketing Blitz 2025
+ Legal Compliance          | Legal Compliance
+ Customer Portal           | Customer Portal
+ Sales Booster             | Sales Booster
+ R&D Pilot                 | R&D Pilot
+ Procurement Tracker       | Procurement Tracker
+ Operations Streamline     | Operations Streamline
+(10 rows)
+
+project_management=#
+project_management=# SELECT
+project_management-#   'Emp: ' || e.first_name || ' ' || e.last_name || ' (' || d.department_name || ')' AS employee_label
+project_management-# FROM employee e
+project_management-# JOIN departments d ON e.department_id = d.department_id;
+              employee_label
+-------------------------------------------
+ Emp: Alice Johnson (Human Resources)
+ Emp: Bob Smith (Information Technology)
+ Emp: Carol Adams (Finance)
+ Emp: David Lee (Marketing)
+ Emp: Eve Martins (Information Technology)
+ Emp: Frank Green (Sales)
+ Emp: Grace Brown (Legal)
+ Emp: Hank Wilson (Operations)
+ Emp: Ivy Clark (Research and Development)
+ Emp: Jake White (Customer Service)
+(10 rows)
+
+
+project_management=# SELECT
+project_management-#   first_name,
+project_management-#   last_name,
+project_management-#   email,
+project_management-#   LENGTH(email) AS email_length
+project_management-# FROM employee;
+ first_name | last_name |           email           | email_length
+------------+-----------+---------------------------+--------------
+ Alice      | Johnson   | alice.johnson@company.com |           25
+ Bob        | Smith     | bob.smith@company.com     |           21
+ Carol      | Adams     | carol.adams@company.com   |           23
+ David      | Lee       | david.lee@company.com     |           21
+ Eve        | Martins   | eve.martins@company.com   |           23
+ Frank      | Green     | frank.green@company.com   |           23
+ Grace      | Brown     | grace.brown@company.com   |           23
+ Hank       | Wilson    | hank.wilson@company.com   |           23
+ Ivy        | Clark     | ivy.clark@company.com     |           21
+ Jake       | White     | jake.white@company.com    |           22
+(10 rows)
+
+
+project_management=# SELECT
+project_management-#   email,
+project_management-#   SPLIT_PART(SPLIT_PART(email, '@', 1), '.', 2) AS last_name_from_email
+project_management-# FROM employee;
+           email           | last_name_from_email
+---------------------------+----------------------
+ alice.johnson@company.com | johnson
+ bob.smith@company.com     | smith
+ carol.adams@company.com   | adams
+ david.lee@company.com     | lee
+ eve.martins@company.com   | martins
+ frank.green@company.com   | green
+ grace.brown@company.com   | brown
+ hank.wilson@company.com   | wilson
+ ivy.clark@company.com     | clark
+ jake.white@company.com    | white
+(10 rows)
+
+
+project_management=# SELECT
+project_management-#   CONCAT(UPPER(last_name), ', ', first_name) AS formatted_name
+project_management-# FROM employee;
+ formatted_name
+----------------
+ JOHNSON, Alice
+ SMITH, Bob
+ ADAMS, Carol
+ LEE, David
+ MARTINS, Eve
+ GREEN, Frank
+ BROWN, Grace
+ WILSON, Hank
+ CLARK, Ivy
+ WHITE, Jake
+(10 rows)
+
+project_management=# SELECT
+project_management-#   CONCAT(
+project_management(#     first_name, ' ', last_name,
+project_management(#     CASE
+project_management(#       WHEN EXISTS (
+project_management(#         SELECT 1
+project_management(#         FROM employee_projects ep
+project_management(#         JOIN projects p ON ep.project_id = p.project_id
+project_management(#         WHERE ep.employee_id = e.employee_id
+project_management(#           AND (p.end_date IS NULL OR p.end_date >= CURRENT_DATE)
+project_management(#       ) THEN ' (Active)'
+project_management(#       ELSE ''
+project_management(#     END
+project_management(#   ) AS employee_status
+project_management-# FROM employee e;
+   employee_status
+----------------------
+ Alice Johnson
+ Bob Smith (Active)
+ Carol Adams
+ David Lee
+ Eve Martins (Active)
+ Frank Green
+ Grace Brown
+ Hank Wilson
+ Ivy Clark (Active)
+ Jake White
+
+project_management=# SELECT
+project_management-#   salary,
+project_management-#   ROUND(salary) AS rounded_salary
+project_management-# FROM employee;
+ salary  | rounded_salary
+---------+----------------
+ 4500.00 |           4500
+ 5200.00 |           5200
+ 6700.00 |           6700
+ 3800.00 |           3800
+ 4000.00 |           4000
+ 6000.00 |           6000
+ 4900.00 |           4900
+ 3100.00 |           3100
+ 2700.00 |           2700
+ 3600.00 |           3600
+
+
+project_management=# SELECT *
+project_management-# FROM employee
+project_management-# WHERE MOD(salary, 2) = 0;
+ employee_id | first_name | last_name |           email           | hire_date  | salary  | department_id
+-------------+------------+-----------+---------------------------+------------+---------+---------------
+         101 | Alice      | Johnson   | alice.johnson@company.com | 2015-03-15 | 4500.00 |             1
+         102 | Bob        | Smith     | bob.smith@company.com     | 2018-06-23 | 5200.00 |             3
+         103 | Carol      | Adams     | carol.adams@company.com   | 2012-09-10 | 6700.00 |             2
+         104 | David      | Lee       | david.lee@company.com     | 2020-01-05 | 3800.00 |             4
+         105 | Eve        | Martins   | eve.martins@company.com   | 2019-12-11 | 4000.00 |             3
+         106 | Frank      | Green     | frank.green@company.com   | 2017-07-08 | 6000.00 |             8
+         107 | Grace      | Brown     | grace.brown@company.com   | 2014-11-02 | 4900.00 |             5
+         108 | Hank       | Wilson    | hank.wilson@company.com   | 2013-02-17 | 3100.00 |             6
+         109 | Ivy        | Clark     | ivy.clark@company.com     | 2021-08-30 | 2700.00 |             9
+         110 | Jake       | White     | jake.white@company.com    | 2022-05-19 | 3600.00 |             7
+(10 rows)
+
+project_management=# SELECT
+project_management-#   project_id,
+project_management-#   start_date,
+project_management-#   end_date,
+project_management-#   end_date - start_date AS duration_days
+project_management-# FROM projects;
+ project_id | start_date |  end_date  | duration_days
+------------+------------+------------+---------------
+        201 | 2023-01-01 | 2023-12-31 |           364
+        202 | 2022-05-15 | 2023-04-30 |           350
+        203 | 2024-01-01 |            |
+        204 | 2025-02-01 | 2025-06-30 |           149
+        205 | 2023-07-10 | 2024-01-10 |           184
+        206 | 2021-11-01 | 2022-10-31 |           364
+        207 | 2022-04-01 | 2023-03-31 |           364
+        208 | 2025-01-01 |            |
+        209 | 2024-03-15 | 2024-11-15 |           245
+        210 | 2022-09-01 | 2023-09-01 |           365
+(10 rows)
+
+project_management=# SELECT
+project_management-#   ABS(e1.salary - e2.salary) AS salary_difference
+project_management-# FROM employee e1
+project_management-# JOIN employee e2 ON e1.employee_id = 1 AND e2.employee_id = 2;
+ salary_difference
+-------------------
+
+project_management=# SELECT
+project_management-#   salary,
+project_management-#   salary * POWER(1.10, 1) AS increased_salary
+project_management-# FROM employee;
+ salary  |    increased_salary
+---------+-------------------------
+ 4500.00 | 4950.000000000000000000
+ 5200.00 | 5720.000000000000000000
+ 6700.00 | 7370.000000000000000000
+ 3800.00 | 4180.000000000000000000
+ 4000.00 | 4400.000000000000000000
+ 6000.00 | 6600.000000000000000000
+ 4900.00 | 5390.000000000000000000
+ 3100.00 | 3410.000000000000000000
+ 2700.00 | 2970.000000000000000000
+ 3600.00 | 3960.000000000000000000
+
+
+project_management=# SELECT RANDOM() AS random_number;
+    random_number
+---------------------
+ 0.18206528754130202
+(1 row)
+
+
+project_management=# SELECT
+project_management-#   salary,
+project_management-#   CEIL(salary) AS salary_ceiled,
+project_management-#   FLOOR(salary) AS salary_floored
+project_management-# FROM employee;
+ salary  | salary_ceiled | salary_floored
+---------+---------------+----------------
+ 4500.00 |          4500 |           4500
+ 5200.00 |          5200 |           5200
+ 6700.00 |          6700 |           6700
+ 3800.00 |          3800 |           3800
+ 4000.00 |          4000 |           4000
+ 6000.00 |          6000 |           6000
+ 4900.00 |          4900 |           4900
+ 3100.00 |          3100 |           3100
+ 2700.00 |          2700 |           2700
+ 3600.00 |          3600 |           3600
+(10 rows)
+
+project_management=# SELECT
+project_management-#   phone_number,
+project_management-#   LENGTH(phone_number) AS phone_length
+project_management-# FROM employee;
+ERROR:  column "phone_number" does not exist
+LINE 2:   phone_number,
+ 
+
+project_management=# SELECT
+project_management-#   salary,
+project_management-#   CASE
+project_management-#     WHEN salary >= 80000 THEN 'High'
+project_management-#     WHEN salary >= 40000 THEN 'Medium'
+project_management-#     ELSE 'Low'
+project_management-#   END AS salary_category
+project_management-# FROM employee;
+ salary  | salary_category
+---------+-----------------
+ 4500.00 | Low
+ 5200.00 | Low
+ 6700.00 | Low
+ 3800.00 | Low
+ 4000.00 | Low
+ 6000.00 | Low
+ 4900.00 | Low
+ 3100.00 | Low
+ 2700.00 | Low
+ 3600.00 | Low
+
+
+project_management=# SELECT
+project_management-#   salary,
+project_management-#   LENGTH(REGEXP_REPLACE(salary::TEXT, '\D', '', 'g')) AS digit_count
+project_management-# FROM employee;
+ salary  | digit_count
+---------+-------------
+ 4500.00 |           6
+ 5200.00 |           6
+ 6700.00 |           6
+ 3800.00 |           6
+ 4000.00 |           6
+ 6000.00 |           6
+ 4900.00 |           6
+ 3100.00 |           6
+ 2700.00 |           6
+ 3600.00 |           6
+
+project_management=# SELECT CURRENT_DATE AS today_date;
+ today_date
+------------
+ 2025-08-02
+
+project_management=# SELECT
+project_management-#   SUM((end_date - start_date) + 1) AS total_days_worked
+project_management-# FROM
+project_management-#   projects;
+ total_days_worked
+-------------------
+              2393
+
+project_management=# SELECT *
+project_management-# FROM employee
+project_management-# WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE);
+ employee_id | first_name | last_name | email | hire_date | salary | department_id
+-------------+------------+-----------+-------+-----------+--------+---------------
+(0 rows)
+
+
+project_management=# SELECT hire_date FROM employee ORDER BY hire_date DESC LIMIT 5;
+ hire_date
+------------
+ 2022-05-19
+ 2021-08-30
+ 2020-01-05
+ 2019-12-11
+ 2018-06-23
+(5 rows)
+
+project_management=# SELECT NOW() AS current_date_time;
+       current_date_time
+-------------------------------
+ 2025-08-02 08:01:23.038399-07
+(1 row)
+
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   EXTRACT(YEAR FROM hire_date) AS hire_year,
+project_management-#   EXTRACT(MONTH FROM hire_date) AS hire_month,
+project_management-#   EXTRACT(DAY FROM hire_date) AS hire_day
+project_management-# FROM employee;
+ employee_id | hire_year | hire_month | hire_day
+-------------+-----------+------------+----------
+         101 |      2015 |          3 |       15
+         102 |      2018 |          6 |       23
+         103 |      2012 |          9 |       10
+         104 |      2020 |          1 |        5
+         105 |      2019 |         12 |       11
+         106 |      2017 |          7 |        8
+         107 |      2014 |         11 |        2
+         108 |      2013 |          2 |       17
+         109 |      2021 |          8 |       30
+         110 |      2022 |          5 |       19
+(10 rows)
+
+project_management=# SELECT *
+project_management-# FROM employee
+project_management-# WHERE hire_date < '2020-01-01';
+ employee_id | first_name | last_name |           email           | hire_date  | salary  | department_id
+-------------+------------+-----------+---------------------------+------------+---------+---------------
+         101 | Alice      | Johnson   | alice.johnson@company.com | 2015-03-15 | 4500.00 |             1
+         102 | Bob        | Smith     | bob.smith@company.com     | 2018-06-23 | 5200.00 |             3
+         103 | Carol      | Adams     | carol.adams@company.com   | 2012-09-10 | 6700.00 |             2
+         105 | Eve        | Martins   | eve.martins@company.com   | 2019-12-11 | 4000.00 |             3
+         106 | Frank      | Green     | frank.green@company.com   | 2017-07-08 | 6000.00 |             8
+         107 | Grace      | Brown     | grace.brown@company.com   | 2014-11-02 | 4900.00 |             5
+         108 | Hank       | Wilson    | hank.wilson@company.com   | 2013-02-17 | 3100.00 |             6
+(7 rows)
+
+project_management=# SELECT *
+project_management-# FROM projects
+project_management-# WHERE end_date IS NOT NULL
+project_management-#   AND end_date >= CURRENT_DATE - INTERVAL '30 days';
+ project_id | project_name | start_date | end_date
+------------
+
+project_management=# SELECT
+project_management-#   project_id,
+project_management-#   (end_date - start_date) + 1 AS total_days
+project_management-# FROM projects;
+ project_id | total_days
+------------+------------
+        201 |        365
+        202 |        351
+        203 |
+        204 |        150
+        205 |        185
+        206 |        365
+        207 |        365
+        208 |
+        209 |        246
+        210 |        366
+
+
+project_management=# SELECT
+project_management-#   CONCAT(
+project_management(#     TO_CHAR(DATE '2025-07-23', 'FMMonth'), ' ',
+project_management(#     EXTRACT(DAY FROM DATE '2025-07-23'), ', ',
+project_management(#     EXTRACT(YEAR FROM DATE '2025-07-23')
+project_management(#   ) AS formatted_date;
+ formatted_date
+----------------
+ July 23, 2025
+(1 row)
+
+
+
+project_management=# SELECT
+project_management-#   project_id,
+project_management-#   start_date,
+project_management-#   end_date,
+project_management-#   CASE
+project_management-#     WHEN end_date IS NULL THEN 'Ongoing'
+project_management-#     ELSE 'Completed'
+project_management-#   END AS project_status
+project_management-# FROM projects;
+ project_id | start_date |  end_date  | project_status
+------------+------------+------------+----------------
+        201 | 2023-01-01 | 2023-12-31 | Completed
+        202 | 2022-05-15 | 2023-04-30 | Completed
+        203 | 2024-01-01 |            | Ongoing
+        204 | 2025-02-01 | 2025-06-30 | Completed
+        205 | 2023-07-10 | 2024-01-10 | Completed
+        206 | 2021-11-01 | 2022-10-31 | Completed
+        207 | 2022-04-01 | 2023-03-31 | Completed
+        208 | 2025-01-01 |            | Ongoing
+        209 | 2024-03-15 | 2024-11-15 | Completed
+        210 | 2022-09-01 | 2023-09-01 | Completed
+(10 rows)
+
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   salary,
+project_management-#   CASE
+project_management-#     WHEN salary >= 10000 THEN 'High'
+project_management-#     WHEN salary >= 5000 THEN 'Medium'
+project_management-#     ELSE 'Low'
+project_management-#   END AS salary_label
+project_management-# FROM employee;
+ employee_id | salary  | salary_label
+-------------+---------+--------------
+         101 | 4500.00 | Low
+         102 | 5200.00 | Medium
+         103 | 6700.00 | Medium
+         104 | 3800.00 | Low
+         105 | 4000.00 | Low
+         106 | 6000.00 | Medium
+         107 | 4900.00 | Low
+         108 | 3100.00 | Low
+         109 | 2700.00 | Low
+         110 | 3600.00 | Low
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   COALESCE(email, 'No Email') AS email_display
+project_management-# FROM employee;
+ employee_id |       email_display
+-------------+---------------------------
+         101 | alice.johnson@company.com
+         102 | bob.smith@company.com
+         103 | carol.adams@company.com
+         104 | david.lee@company.com
+         105 | eve.martins@company.com
+         106 | frank.green@company.com
+         107 | grace.brown@company.com
+         108 | hank.wilson@company.com
+         109 | ivy.clark@company.com
+         110 | jake.white@company.com
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   hire_date,
+project_management-#   CASE
+project_management-#     WHEN hire_date < DATE '2015-01-01' THEN 'Veteran'
+project_management-#     ELSE 'New'
+project_management-#   END AS status
+project_management-# FROM employee;
+ employee_id | hire_date  | status
+-------------+------------+---------
+         101 | 2015-03-15 | New
+         102 | 2018-06-23 | New
+         103 | 2012-09-10 | Veteran
+         104 | 2020-01-05 | New
+         105 | 2019-12-11 | New
+         106 | 2017-07-08 | New
+         107 | 2014-11-02 | Veteran
+         108 | 2013-02-17 | Veteran
+         109 | 2021-08-30 | New
+         110 | 2022-05-19 | New
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   COALESCE(salary, 3000) AS salary_defaulted
+project_management-# FROM employee;
+ employee_id | salary_defaulted
+-------------+------------------
+         101 |          4500.00
+         102 |          5200.00
+         103 |          6700.00
+         104 |          3800.00
+         105 |          4000.00
+         106 |          6000.00
+         107 |          4900.00
+         108 |          3100.00
+         109 |          2700.00
+         110 |          3600.00
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   department_id,
+project_management-#   CASE
+project_management-#     WHEN department_id = 1 THEN 'IT'
+project_management-#     WHEN department_id = 2 THEN 'HR'
+project_management-#     ELSE 'Other'
+project_management-#   END AS department_name
+project_management-# FROM employee;
+ employee_id | department_id | department_name
+-------------+---------------+-----------------
+         101 |             1 | IT
+         102 |             3 | Other
+         103 |             2 | HR
+         104 |             4 | Other
+         105 |             3 | Other
+         106 |             8 | Other
+         107 |             5 | Other
+         108 |             6 | Other
+         109 |             9 | Other
+         110 |             7 | Other
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   salary,
+project_management-#   CASE
+project_management-#     WHEN salary >= 10000 THEN 'Tax Band A'
+project_management-#     WHEN salary >= 7000 THEN 'Tax Band B'
+project_management-#     WHEN salary >= 4000 THEN 'Tax Band C'
+project_management-#     ELSE 'Tax Exempt'
+project_management-#   END AS tax_band
+project_management-# FROM employee;
+ employee_id | salary  |  tax_band
+-------------+---------+------------
+         101 | 4500.00 | Tax Band C
+         102 | 5200.00 | Tax Band C
+         103 | 6700.00 | Tax Band C
+         104 | 3800.00 | Tax Exempt
+         105 | 4000.00 | Tax Band C
+         106 | 6000.00 | Tax Band C
+         107 | 4900.00 | Tax Band C
+         108 | 3100.00 | Tax Exempt
+         109 | 2700.00 | Tax Exempt
+         110 | 3600.00 | Tax Exempt
+
+
+
+project_management=# SELECT
+project_management-#   project_id,
+project_management-#   start_date,
+project_management-#   end_date,
+project_management-#   CASE
+project_management-#     WHEN end_date IS NULL THEN 'Ongoing'
+project_management-#     ELSE
+project_management-#       CASE
+project_management-#         WHEN (end_date - start_date + 1) > 60 THEN 'Long'
+project_management-#         WHEN (end_date - start_date + 1) > 30 THEN 'Medium'
+project_management-#         ELSE 'Short'
+project_management-#       END
+project_management-#   END AS duration_label
+project_management-# FROM projects;
+ project_id | start_date |  end_date  | duration_label
+------------+------------+------------+----------------
+        201 | 2023-01-01 | 2023-12-31 | Long
+        202 | 2022-05-15 | 2023-04-30 | Long
+        203 | 2024-01-01 |            | Ongoing
+        204 | 2025-02-01 | 2025-06-30 | Long
+        205 | 2023-07-10 | 2024-01-10 | Long
+        206 | 2021-11-01 | 2022-10-31 | Long
+        207 | 2022-04-01 | 2023-03-31 | Long
+        208 | 2025-01-01 |            | Ongoing
+        209 | 2024-03-15 | 2024-11-15 | Long
+        210 | 2022-09-01 | 2023-09-01 | Long
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   salary,
+project_management-#   CASE
+project_management-#     WHEN MOD(employee_id, 2) = 0 THEN 'Even ID'
+project_management-#     ELSE 'Odd ID'
+project_management-#   END AS id_type
+project_management-# FROM employee;
+ employee_id | salary  | id_type
+-------------+---------+---------
+         101 | 4500.00 | Odd ID
+         102 | 5200.00 | Even ID
+         103 | 6700.00 | Odd ID
+         104 | 3800.00 | Even ID
+         105 | 4000.00 | Odd ID
+         106 | 6000.00 | Even ID
+         107 | 4900.00 | Odd ID
+         108 | 3100.00 | Even ID
+         109 | 2700.00 | Odd ID
+         110 | 3600.00 | Even ID
+
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   CONCAT(
+project_management(#     COALESCE(first_name, 'NoFirst'), ' ',
+project_management(#     COALESCE(last_name, 'NoLast')
+project_management(#   ) AS full_name
+project_management-# FROM employee;
+ employee_id |   full_name
+-------------+---------------
+         101 | Alice Johnson
+         102 | Bob Smith
+         103 | Carol Adams
+         104 | David Lee
+         105 | Eve Martins
+         106 | Frank Green
+         107 | Grace Brown
+         108 | Hank Wilson
+         109 | Ivy Clark
+         110 | Jake White
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   first_name,
+project_management-#   CASE
+project_management-#     WHEN LENGTH(first_name) > 10 THEN 'Long Name'
+project_management-#     ELSE 'Normal'
+project_management-#   END AS name_length_status
+project_management-# FROM employee;
+ employee_id | first_name | name_length_status
+-------------+------------+--------------------
+         101 | Alice      | Normal
+         102 | Bob        | Normal
+         103 | Carol      | Normal
+         104 | David      | Normal
+         105 | Eve        | Normal
+         106 | Frank      | Normal
+         107 | Grace      | Normal
+         108 | Hank       | Normal
+         109 | Ivy        | Normal
+         110 | Jake       | Normal
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   email,
+project_management-#   CASE
+project_management-#     WHEN UPPER(email) LIKE '%TEST%' THEN 'Dummy Account'
+project_management-#     ELSE 'Real Account'
+project_management-#   END AS email_status
+project_management-# FROM employee;
+ employee_id |           email           | email_status
+-------------+---------------------------+--------------
+         101 | alice.johnson@company.com | Real Account
+         102 | bob.smith@company.com     | Real Account
+         103 | carol.adams@company.com   | Real Account
+         104 | david.lee@company.com     | Real Account
+         105 | eve.martins@company.com   | Real Account
+         106 | frank.green@company.com   | Real Account
+         107 | grace.brown@company.com   | Real Account
+         108 | hank.wilson@company.com   | Real Account
+         109 | ivy.clark@company.com     | Real Account
+         110 | jake.white@company.com    | Real Account
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   hire_date,
+project_management-#   CASE
+project_management-#     WHEN EXTRACT(YEAR FROM hire_date) <= 2010 THEN 'Senior'
+project_management-#     WHEN EXTRACT(YEAR FROM hire_date) <= 2020 THEN 'Mid-level'
+project_management-#     ELSE 'Junior'
+project_management-#   END AS seniority
+project_management-# FROM employee;
+ employee_id | hire_date  | seniority
+-------------+------------+-----------
+         101 | 2015-03-15 | Mid-level
+         102 | 2018-06-23 | Mid-level
+         103 | 2012-09-10 | Mid-level
+         104 | 2020-01-05 | Mid-level
+         105 | 2019-12-11 | Mid-level
+         106 | 2017-07-08 | Mid-level
+         107 | 2014-11-02 | Mid-level
+         108 | 2013-02-17 | Mid-level
+         109 | 2021-08-30 | Junior
+         110 | 2022-05-19 | Junior
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   salary,
+project_management-#   CASE
+project_management-#     WHEN salary < 4000 THEN 'Increment: 20%'
+project_management-#     WHEN salary < 7000 THEN 'Increment: 10%'
+project_management-#     ELSE 'Increment: 5%'
+project_management-#   END AS increment_range
+project_management-# FROM employee;
+ employee_id | salary  | increment_range
+-------------+---------+-----------------
+         101 | 4500.00 | Increment: 10%
+         102 | 5200.00 | Increment: 10%
+         103 | 6700.00 | Increment: 10%
+         104 | 3800.00 | Increment: 20%
+         105 | 4000.00 | Increment: 10%
+         106 | 6000.00 | Increment: 10%
+         107 | 4900.00 | Increment: 10%
+         108 | 3100.00 | Increment: 20%
+         109 | 2700.00 | Increment: 20%
+         110 | 3600.00 | Increment: 20%
+
+
+project_management=# SELECT
+project_management-#   employee_id,
+project_management-#   hire_date,
+project_management-#   CASE
+project_management-#     WHEN EXTRACT(MONTH FROM hire_date) = EXTRACT(MONTH FROM CURRENT_DATE)
+project_management-#     THEN 'Anniversary Month'
+project_management-#     ELSE 'Not Anniversary Month'
+project_management-#   END AS anniversary_status
+project_management-# FROM employee;
+ employee_id | hire_date  |  anniversary_status
+-------------+------------+-----------------------
+         101 | 2015-03-15 | Not Anniversary Month
+         102 | 2018-06-23 | Not Anniversary Month
+         103 | 2012-09-10 | Not Anniversary Month
+         104 | 2020-01-05 | Not Anniversary Month
+         105 | 2019-12-11 | Not Anniversary Month
+         106 | 2017-07-08 | Not Anniversary Month
+         107 | 2014-11-02 | Not Anniversary Month
+         108 | 2013-02-17 | Not Anniversary Month
+         109 | 2021-08-30 | Anniversary Month
+         110 | 2022-05-19 | Not Anniversary Month
+
+
+
